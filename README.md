@@ -1,2 +1,2 @@
 # InvestmentInsight
-![](/assets/InvestmentInsight.drawio.pdf)
+![](/assets/InvestmentInsight.drawio.png)

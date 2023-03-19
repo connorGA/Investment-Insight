@@ -1,6 +1,9 @@
 import React, { useEffect } from 'react';
 import './App.css';
+import Assets from './components/assests/Assets';
 import Header from './components/header/Header';
+import ProfitGraph from './components/profitGraph/ProfitGraph'
+import Budget from './components/budget/Budget';
 
 function App() {
   useEffect(() => {
@@ -21,6 +24,10 @@ function App() {
     <div className="App">
       <>
         <Header />
+        <Assets />
+        <ProfitGraph />
+        <Budget />
+
       </>
     </div>
   );

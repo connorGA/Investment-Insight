@@ -1,0 +1,43 @@
+.middle-container {
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  input,
+  button {
+    padding: 8px;
+    font-size: 14px;
+  }
+  
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  th,
+  td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  th {
+    background-color: #f2f2f2;
+  }
+  .assets-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  
+  .add-asset-button {
+    margin-top: 1rem;
+  }

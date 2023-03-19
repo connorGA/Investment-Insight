@@ -1,9 +1,9 @@
 import React from 'react'
 import './budget.css'
 
-function Budget() {
+function Budget({ className }) {
   return (
-    <div>Budget</div>
+    <div className={className}>Budget</div>
   )
 }
 

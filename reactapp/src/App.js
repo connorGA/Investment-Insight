@@ -22,13 +22,12 @@ function App() {
 
   return (
     <div className="App">
-      <>
-        <Header />
+      <Header className="header-container" />
+      <div className="middle-container">
         <Assets />
         <ProfitGraph />
-        <Budget />
-
-      </>
+      </div>
+      <Budget className="bottom-container" />
     </div>
   );
 }

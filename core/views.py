@@ -1,67 +1,76 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User, auth
+from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+from django.middleware.csrf import get_token
+from django.http import HttpResponseBadRequest
 from .models import Profile
+import json
 
 def index(request):
     return render(request, 'index.html')
 
+@csrf_exempt
 def signup(request):
-
     if request.method == 'POST':
-        username = request.POST['username']
-        email = request.POST['email']
-        password = request.POST['password']
-        password2 = request.POST['password2']
+        data = json.loads(request.body)
+        username = data['username']
+        email = data['email']
+        password = data['password']
+        password2 = data['password2']
+
+        # log the value of the X-CSRFToken header
+        csrf_token = request.headers.get('X-CSRFToken')
+        print('CSRF token:', csrf_token)
 
         if password == password2:
             if User.objects.filter(email=email).exists():
-                messages.info(request, 'Email Taken')
-                return redirect('signup')
+                return JsonResponse({'message': 'Email Taken', 'status': 'error'})
             elif User.objects.filter(username=username).exists():
-                messages.info(request, 'Username Taken')
-                return redirect('signup')
+                return JsonResponse({'message': 'Username Taken', 'status': 'error'})
             else:
                 user = User.objects.create_user(username=username, email=email, password=password)
                 user.save()
 
-                #log user in and redirect to settings page
                 user_login = auth.authenticate(username=username, password=password)
                 auth.login(request, user_login)
 
-                #create a profile object for the new user
                 user_model = User.objects.get(username=username)
                 new_profile = Profile.objects.create(user=user_model, id_user=user_model.id)
                 new_profile.save()
 
-                return redirect('settings')
+                # Redirect to login page after successful account creation
+                return redirect('signin')
         else:
-            messages.info(request, 'Password Not Matching')
-            return redirect('signup')
-        
-    else:
-        return render(request, 'signup.html')
+            return JsonResponse({'message': 'Password Not Matching', 'status': 'error'})
+
+    # Handle GET requests to return a CSRF token
+    if request.method == 'GET':
+        csrf_token = get_token(request)
+        return JsonResponse({'csrfToken': csrf_token})
+
+    # Handle requests other than GET and POST
+    return HttpResponseBadRequest()
 
 
+@csrf_exempt
 def signin(request):
-
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
+        data = json.loads(request.body)
+        username = data['username']
+        password = data['password']
 
-        user = auth.authenticate(username=username, password=password)
+        user = authenticate(request, username=username, password=password)
 
         if user is not None:
-            auth.login(request, user)
-            return redirect('/')
+            login(request, user)
+            return JsonResponse({'message': 'Login successful', 'authenticated': True})
         else:
-            messages.info(request, 'Credentials Invalid')
-            return redirect('signin')
+            return JsonResponse({'message': 'Invalid credentials', 'authenticated': False})
 
-    else:
-        return render(request, 'signin.html')
 
 def test_api(request):
     return JsonResponse({'message': 'Hello from Django!!!!'})

@@ -44,15 +44,22 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+}
+
 
 ROOT_URLCONF = 'djangoproj.urls'
 
@@ -106,7 +113,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # This is the default address for React development server
+    "http://127.0.0.1:8000",
 ]
+
+
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/

@@ -43,7 +43,7 @@ def signup(request):
                 new_profile.save()
 
                 # Redirect to login page after successful account creation
-                return redirect('signin')
+                return JsonResponse({'message': 'Account created successfully', 'status': 'success'})
         else:
             return JsonResponse({'message': 'Password Not Matching', 'status': 'error'})
 

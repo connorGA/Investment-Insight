@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { Navigate } from 'react-router-dom';
 
 function SignUp() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [password2, setPassword2] = useState('');
+  const [redirectToSignIn, setRedirectToSignIn] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,6 +28,11 @@ function SignUp() {
   
       const data = await response.json();
       console.log(data);
+      if (data.status === 'success') {
+        setRedirectToSignIn(true);
+      } else {
+        console.error('Error:', data.message);
+      }
     } catch (error) {
       console.error('Error:', error);
     }
@@ -45,6 +52,10 @@ function SignUp() {
         }
     }
     return cookieValue;
+  }
+
+  if (redirectToSignIn) {
+    return <Navigate to="/signin" />;
   }
 
   return (
@@ -94,4 +105,5 @@ function SignUp() {
 }
 
 export default SignUp;
+
 

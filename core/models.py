@@ -14,4 +14,16 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.username
 
+class Asset(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    current_price = models.DecimalField(max_digits=10, decimal_places=2)
+    buy_date = models.DateField()
+    buy_price = models.DecimalField(max_digits=10, decimal_places=2)
+    sale_date = models.DateField(null=True, blank=True)
+    sale_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    profit_or_loss = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
 

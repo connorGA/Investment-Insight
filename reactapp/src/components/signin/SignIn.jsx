@@ -22,7 +22,7 @@ function SignIn() {
 
       const data = await response.json();
 
-      if (data.status === 'success') {
+      if (data.authenticated) {
         setRedirectToHome(true);
       } else {
         setErrorMessage(data.message);
@@ -82,4 +82,5 @@ function SignIn() {
 }
 
 export default SignIn;
+
 

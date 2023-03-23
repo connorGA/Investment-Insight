@@ -1,9 +1,11 @@
-import React, { useEffect } from 'react';
-import { Line } from 'react-chartjs-2';
+import React, { useEffect, useRef } from 'react';
+import Chart from 'chart.js/auto';
 import 'chartjs-adapter-date-fns';
 import './profitGraph.css';
 
 function ProfitGraph() {
+  const chartRef = useRef(null);
+
   const data = {
     labels: ['2023-01-01', '2023-02-01', '2023-03-01', '2023-04-01', '2023-05-01'],
     datasets: [
@@ -40,12 +42,23 @@ function ProfitGraph() {
     },
   };
 
+  useEffect(() => {
+    const ctx = chartRef.current.getContext('2d');
+    const chart = new Chart(ctx, {
+      type: 'line',
+      data: data,
+      options: options,
+    });
+    return () => {
+      chart.destroy();
+    };
+  }, [data, options]);
+
   return (
     <div className="profit-graph">
-      <Line data={data} options={options} />
+      <canvas ref={chartRef} />
     </div>
   );
 }
 
 export default ProfitGraph;
-

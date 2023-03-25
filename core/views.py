@@ -1,17 +1,64 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User, auth
 from django.contrib.auth import authenticate, login
+from rest_framework import generics, status
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from django.contrib import messages
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.middleware.csrf import get_token
 from django.http import HttpResponseBadRequest
-from .models import Profile
+from .models import Profile, Asset
+from .serializers import AssetSerializer
 import json
 
+
+
+class AssetListCreateView(generics.ListCreateAPIView):
+    serializer_class = AssetSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return Asset.objects.filter(user=user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class AssetRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = AssetSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return Asset.objects.filter(user=user)
+
+
+
+
+@login_required
 def index(request):
     return render(request, 'index.html')
+
+@login_required
+def assets(request):
+    if request.method == 'GET':
+        view = AssetListCreateView.as_view()
+        return view(request)
+    elif request.method == 'POST':
+        view = AssetListCreateView.as_view()
+        return view(request)
+    elif request.method in ['PUT', 'PATCH']:
+        view = AssetRetrieveUpdateDestroyView.as_view()
+        return view(request)
+    elif request.method == 'DELETE':
+        view = AssetRetrieveUpdateDestroyView.as_view()
+        return view(request)
+    else:
+        return HttpResponseBadRequest()
+
+
 
 @csrf_exempt
 def signup(request):
@@ -74,3 +121,5 @@ def signin(request):
 
 def test_api(request):
     return JsonResponse({'message': 'Hello from Django!!!!'})
+
+

@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User, auth
 from django.contrib.auth import authenticate, login
-from rest_framework import generics, status
+from django.contrib.auth.mixins import LoginRequiredMixin
+from rest_framework import generics, status, exceptions
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.contrib import messages
@@ -15,31 +16,39 @@ from .serializers import AssetSerializer
 import json
 
 
-
-class AssetListCreateView(generics.ListCreateAPIView):
+class AssetListCreateView(LoginRequiredMixin, generics.ListCreateAPIView):
     serializer_class = AssetSerializer
 
     def get_queryset(self):
         user = self.request.user
-        return Asset.objects.filter(user=user)
+        if user.is_authenticated:
+            return Asset.objects.filter(user=user)
+        else:
+            return []
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
+    def create(self, request, *args, **kwargs):
+        try:
+            return super().create(request, *args, **kwargs)
+        except exceptions.APIException as e:
+            print(e)  # You can also use logging here
+            raise
 
-class AssetRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+
+class AssetRetrieveUpdateDestroyView(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     serializer_class = AssetSerializer
 
     def get_queryset(self):
         user = self.request.user
         return Asset.objects.filter(user=user)
-
-
 
 
 @login_required
 def index(request):
     return render(request, 'index.html')
+
 
 @login_required
 def assets(request):

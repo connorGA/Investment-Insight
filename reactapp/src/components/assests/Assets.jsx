@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
-import "./assets.css";
+import React, { useState, useEffect } from 'react';
+import './assets.css';
+
 
 function Assets() {
   const [showForm, setShowForm] = useState(false);
@@ -11,10 +12,17 @@ function Assets() {
   }, []);
 
   const fetchAssets = async () => {
-    const response = await fetch("/api/assets/");
+    const token = localStorage.getItem("token");
+    const response = await fetch("/api/assets/", {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Token ${token}`,
+      },
+    });
     const data = await response.json();
     setAssets(data);
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
